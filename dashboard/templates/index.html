@@ -1,0 +1,174 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block title %}
+Dashboard
+{% endblock title %}
+
+{% block content %}
+   
+  </head>
+  <body>
+   
+
+
+      <!-- block display -->
+      <div class="page-wrapper">
+        <!--page-content-wrapper-->
+        <div class="page-content-wrapper">
+          <!--page content-->
+          <div class="page-content">
+      
+            <!-- Kozhikode Circle -->
+            <div class="row mb-5">
+         
+              <div class="col-12">
+                <div class="circle text-light">
+                  <h3>{{ circle.title }}</h3>
+                  <h6>CIRCLE</h6>
+                  
+                  
+                    <h4>{{ circle_total }} km({{ circle_total_percentage }}%) <span class="badge bg-primary">{{ circle_actual_total }} km</span> <span class="badge bg-primary">{{ circle_qty_ulccs_total }} km</span></h4>
+                 
+                </div>
+              </div>
+        
+            </div>
+      
+            <!-- Section Cards -->
+            <div class="row mb-3">
+              <div class="col-12 col-lg-4">
+                <div class="card radius-15 overflow-hidden">
+                  <div class="card-body chart1">
+                    <div class="d-flex text-light">
+                      <div>
+                        <p class="mb-0">{{ Kozhikode.title }}</p>
+                        
+                        
+                        <h4 class="mb-0">{{ Kozhikode_total }}({{ Kozhikode_total_percentage }}%) <span class="badge bg-secondary">{{ Kozhikode_actual_total }} </span> <span class="badge bg-secondary">{{ Kozhikode_qty_ulccs_total }}</span></h4>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-lg-4">
+                <div class="card radius-15 overflow-hidden">
+                  <div class="card-body chart2">
+                    <div class="d-flex text-light">
+                      <div>
+                        <p class="mb-0">{{ Balussery.title }}</p>
+                       
+                          <h4 class="mb-0">{{ Balussery_total }}({{ Balussery_total_percentage }}%)<span class="badge bg-secondary">{{ Balussery_actual_total }} </span>  <span class="badge bg-secondary">{{ Balussery_qty_ulccs_total }}</span></h4>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-lg-4">
+                <div class="card radius-15 overflow-hidden">
+                  <div class="card-body chart3">
+                    <div class="d-flex text-light">
+                      <div>
+                        <p class="mb-0">{{ Feroke.title }}</p>
+                        
+                        <h4 class="mb-0">{{ Feroke_total }}({{ Feroke_total_percentage }}%) <span class="badge bg-secondary">{{ Feroke_actual_total }}</span> <span class="badge bg-secondary"> {{ Feroke_qty_ulccs_total }}</span></h4>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+      
+
+
+     
+<!-- Dropdown Filters -->
+<div class="row mb-3 mt-5">
+  <div class="col-md-6">
+      <label for="circleFilter" class="form-label">Circle</label>
+      <select class="form-select" id="circleFilter">
+          <option value="">Select Circle</option>
+        
+          <option value="{{ circle.id }}" {% if circle.id == selected_circle_id %} selected {% endif %}>
+              {{ circle.title }}
+          </option>
+       
+      </select>
+  </div>
+  <div class="col-md-6">
+      <label for="divisionFilter" class="form-label">Divisions</label>
+      <select class="form-select" id="divisionFilter">
+          <option value="">Select Division</option>
+          {% for division in division %}
+          <option value="{{ division.id }}" {% if division.id == selected_division_id %} selected {% endif %}>
+              {{ division.title }}
+          </option>
+          {% endfor %}
+      </select>
+  </div>
+</div>
+
+<!-- Section Data Table -->
+<div class="dashboard-container">
+  <h2>Section Data</h2>
+  <div class="table-container">
+      <table class="table table-striped table-bordered">
+          <thead class="table-dark">
+              <tr>
+                  <th>SI.no</th>
+                  <th>Sections</th>
+              </tr>
+          </thead>
+          <tbody id="sectionsTableBody">
+              {% for section in circle_sections_s %}
+              <tr>
+                  <td>{{ section.id }}</td>
+                  <td>{{ section.title }}
+                      <span class="badge bg-secondary">{{ section.total_value }} km</span>
+                      <span class="badge bg-success">{{ section.completion_percentage }}%</span>
+                      <span class="badge bg-warning">{{ section.actual_qty }} km</span>
+                      <span class="badge bg-info">{{ section.qty_ulccs }} km</span>
+                  </td>
+              </tr>
+              {% empty %}
+              <tr>
+                  <td colspan="6">No sections found.</td>
+              </tr>
+              {% endfor %} 
+
+          </tbody>
+      </table>
+  </div>
+</div>
+
+</div>
+<!--end page content-->
+</div>
+<!--end page-content-wrapper-->
+</div>
+<!--end page-wrapper-->
+
+<!-- Bootstrap 5 JavaScript Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function toggleSidebar() {
+const sidebar = document.getElementById("sidebar");
+const content = document.getElementById("content");
+sidebar.classList.toggle("collapsed");
+content.classList.toggle("collapsed");
+
+// To show/hide the sidebar on small screens
+if (window.innerWidth <= 768) {
+  if (sidebar.classList.contains("collapsed")) {
+    sidebar.style.display = "none"; // Hide the sidebar
+  } else {
+    sidebar.style.display = "block"; // Show the sidebar
+  }
+}
+}
+</script>
+
+  
+ 
+
+
+{%  endblock content%}

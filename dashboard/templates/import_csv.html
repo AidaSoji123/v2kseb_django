@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load static %}
+ {% block content %}
+<style>
+    .button{
+        float: right;
+    }
+</style>
+<div class="container mt-5">
+  <!-- block display -->
+  <div class="page-wrapper">
+    <!--page-content-wrapper-->
+    <div class="page-content-wrapper">
+      <!--page content-->
+      <div class="page-content">
+        
+
+        <!-- Section: Import CSV -->
+        <h2 class="mb-4">Import CSV File</h2>
+        <form method="POST" enctype="multipart/form-data" class="mb-4 ms-5 ">
+          {% csrf_token %}
+          <center> {{ form.as_p }}</center>
+          <button type="submit" class="btn btn-primary button mt-2 me-2">Upload</button>
+        </form>
+
+        <!-- Section: Flash Messages -->
+        {% for message in messages %}
+        <div
+          class="alert alert-{{ message.tags }} alert-dismissible fade show"
+          role="alert"
+        >
+          {{ message }}
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Close"
+          ></button>
+        </div>
+        {% endfor %}
+
+        <hr />
+
+        <!-- Section: Display Imported Data -->
+        <h3 class="mt-4">Imported Data</h3>
+        <div class="table-responsive">
+          <table class="table table-striped table-bordered mt-3">
+            <thead class="table-dark">
+              <tr>
+                <th>#</th>
+                <th>Section Name</th>
+                <th>Section</th>
+                <th>Date</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for data in imported_data %}
+              <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ data.section_name }}</td>
+                <td>{{ data.section }}</td>
+                <td>{{ data.date }}</td>
+                <td>{{ data.value }}</td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="5" class="text-center">No data available.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+
+    </div>
+    <!--end page content-->
+    </div>
+    <!--end page-content-wrapper-->
+    </div>
+    <!--end page-wrapper-->
+      {% endblock %}
+    </div>
+  </div>
+</div>

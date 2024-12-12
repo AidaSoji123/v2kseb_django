@@ -1,0 +1,309 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        {% block title %} {% endblock title %}
+    </title>
+    <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+</head>
+<body>
+  <style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+      }
+
+      .sidebar {
+        height: 100vh;
+        background-color: #ffffff;
+        padding: 15px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 250px;
+        border-right: 1px solid #dee2e6;
+        transition: all 0.3s ease-out;
+        overflow-x: hidden;
+        z-index: 1000;
+      }
+
+      .sidebar img {
+        height: 50px;
+        margin-bottom: 20px;
+      }
+
+      .sidebar a {
+        color: #333333;
+        text-decoration: none;
+        display: block;
+        padding: 10px 15px;
+        margin-bottom: 5px;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+      }
+
+      .sidebar a:hover {
+        background-color: #f1f1f1;
+      }
+
+      .sidebar.collapsed {
+        width: 0;
+        padding: 0;
+        border: none;
+      }
+
+      .sidebar-toggler {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        width: 40px;
+        height: 40px;
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        z-index: 1100;
+
+      }
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+      }
+
+      .sidebar {
+        height: 100vh;
+        background-color: #ffffff;
+        padding: 15px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 250px;
+        border-right: 1px solid #dee2e6;
+        transition: all 0.3s ease-out;
+        overflow-x: hidden;
+        z-index: 1000;
+      }
+
+      .sidebar img {
+        height: 50px;
+        margin-bottom: 20px;
+      }
+
+      .sidebar a {
+        color: #333333;
+        text-decoration: none;
+        display: block;
+        padding: 10px 15px;
+        margin-bottom: 5px;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+      }
+
+      .sidebar a:hover {
+        background-color: #f1f1f1;
+      }
+
+      .sidebar.collapsed {
+        width: 0;
+        padding: 0;
+        border: none;
+      }
+
+      .sidebar-toggler {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        width: 40px;
+        height: 40px;
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        z-index: 1100;
+      }
+
+      .content {
+        margin-left: 250px;
+        padding: 20px;
+        transition: margin-left 0.3s ease-out;
+      }
+
+      .content.collapsed {
+        margin-left: 0;
+      }
+
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+
+      .header #head {
+        color: #f02769;
+        font-family: sans-serif;
+        font-weight: bold;
+        margin: 0 auto;
+        align: center;
+      }
+
+      .header img {
+        height: 40px;
+      }
+
+      .value-block {
+        border-radius: 8px;
+        background: #ffffff;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+
+      .table-container {
+        overflow-x: auto;
+      }
+
+      .badge {
+        font-size: 0.9rem;
+        padding: 5px 10px;
+      }
+
+      .circle {
+    background-color: #133864;
+    height: 150px;
+    border-radius: 10px;
+    text-align: center;
+    padding-top: 20px;
+  }
+
+  .chart1 {
+    background-color: #be152e;
+  }
+
+  .chart2 {
+    background-color: #588c20;
+  }
+
+  .chart3 {
+    background-color: #0290d3;
+  }
+      
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .sidebar {
+          width: 0;
+          padding: 0;
+          display: none;
+        }
+
+        .content {
+          margin-left: 0;
+        }
+
+        .sidebar.collapsed {
+          width: 0;
+        }
+
+        .content.collapsed {
+          margin-left: 0;
+        }
+      }
+
+      @media (min-width: 769px) {
+        .sidebar-toggler {
+            display: none;
+        }
+      }
+.frm{
+  margin: auto auto;
+  background-color: #455055;
+  height: 350px;
+  color: #fff;
+  padding: auto;
+}
+.frm1{
+  margin: auto auto;
+  background-color: #455055;
+  height: 400px;
+  color: #fff;
+  padding: auto;
+}
+.infrm{
+  margin: auto;
+  padding:20px;
+}
+  </style>
+   <!-- Sidebar -->
+   <div class="sidebar" id="sidebar">
+    <img src="{% static 'images/logo-kseb.png' %}" alt="Logo" />
+    <a href="{% url 'dashboard' %}" class="active">Dashboard</a>
+    <a href="{% url 'import_csv' %}">Import Log</a>
+  </div>
+
+  <!-- Sidebar Toggler (for small screens) -->
+  <div class="sidebar-toggler" id="sidebarToggler" onclick="toggleSidebar()">☰</div>
+
+  
+    <!-- Main Content -->
+    <div class="content" id="content">
+      <!-- Header -->
+      <div class="header">
+        <h1 id="head">RDSS DASHBOARD</h1>
+      
+        {% if request.user.is_authenticated %}
+        <a href="{% url 'logout' %}" title="Logout">
+            <img class="float-right" id="userIcon" src="{% static 'images/user.png' %}" alt="User Icon" />
+            Logout
+        </a>
+    {% else %}
+        <a href="{% url 'login' %}" title="Login">
+            <img class="float-right" id="userIcon" src="{% static 'images/user.png' %}" alt="User Icon" />
+            Login
+        </a>
+    {% endif %}
+    
+        <!-- <img src="https://via.placeholder.com/150" alt="Logo" /> -->
+      </div>
+    {% block content %}
+    {% endblock content %}
+
+<!-- Footer Section -->
+<!-- Start Overlay -->
+<div class="overlay toggle-btn-mobile"></div>
+<!-- End Overlay -->
+
+<!-- Start Back To Top Button -->
+<a href="javascript:;" class="back-to-top">
+  <i class='bx bxs-up-arrow-alt'></i>
+</a>
+<!-- End Back To Top Button -->
+<br><br><br><br><br><br><br><br>
+<!-- Footer -->
+<hr class="footer">
+
+
+  
+  <p class="mb-0 text-center">KSEB 2024</p>
+</div>
+<!-- End Footer -->
+</div> <!-- End Wrapper -->
+
+
+
+
+</body>
+</html>
