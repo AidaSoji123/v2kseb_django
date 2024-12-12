@@ -1,20 +1,20 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
-# from django.contrib.auth.models import User
 from django.db.models import Sum
 from .models import KsebCds, CdsDailyData, CdsPreset
 from django.contrib.auth.decorators import login_required
-# from django.core.validators import validate_email
-# from django.core.exceptions import ValidationError
+from django.http import JsonResponse
 
 def round_to_two(value):
     """Helper function to round a value to 2 decimal places."""
     return round(value, 2)
+
 @login_required
 def dashboard(request):
     # Fetch parent categories
     circle = KsebCds.objects.get(title="Kozhikode", category=KsebCds.CategoryChoices.CIRCLE)
-    division = KsebCds.objects.filter( category=KsebCds.CategoryChoices.DIVISION,parent=circle)
+    division = KsebCds.objects.filter(category=KsebCds.CategoryChoices.DIVISION, parent=circle)
+
     balussery = KsebCds.objects.get(title="Balussery", parent=circle, category=KsebCds.CategoryChoices.DIVISION)
     kozhikode = KsebCds.objects.get(title="Kozhikode", parent=circle, category=KsebCds.CategoryChoices.DIVISION)
     feroke = KsebCds.objects.get(title="Feroke", parent=circle, category=KsebCds.CategoryChoices.DIVISION)
@@ -30,7 +30,18 @@ def dashboard(request):
     Balussery_total = round_to_two(CdsDailyData.objects.filter(section__in=balussery_sections).aggregate(total=Sum('value'))['total'] or 0)
     Kozhikode_total = round_to_two(CdsDailyData.objects.filter(section__in=kozhikode_sections).aggregate(total=Sum('value'))['total'] or 0)
     Feroke_total = round_to_two(CdsDailyData.objects.filter(section__in=feroke_sections).aggregate(total=Sum('value'))['total'] or 0)
-    
+
+    # Calculate totals for each section
+    section_totals = {}
+    for section in circle_sections:
+        section_total_value = round_to_two(CdsDailyData.objects.filter(section=section).aggregate(total=Sum('value'))['total'] or 0)
+        section_actual_total = round_to_two(CdsPreset.objects.filter(section=section).aggregate(total_actual_qty=Sum('actual_qty'))['total_actual_qty'] or 0)
+        section_completion_percentage = round_to_two((section_total_value / section_actual_total) * 100) if section_actual_total else 0
+        section_totals[section.title] = {
+            'total_value': section_total_value,
+            'completion_percentage': section_completion_percentage
+        }
+
     # Actual_qty totals
     circle_actual_total = round_to_two(CdsPreset.objects.filter(section__in=circle_sections).aggregate(total_actual_qty=Sum('actual_qty'))['total_actual_qty'] or 0)
     Balussery_actual_total = round_to_two(CdsPreset.objects.filter(section__in=balussery_sections).aggregate(total_actual_qty=Sum("actual_qty"))['total_actual_qty'] or 0)
@@ -52,7 +63,7 @@ def dashboard(request):
     # Context
     context = {
         'circle': circle,
-        'division':division,
+        'division': division,
         'Balussery': balussery,
         'Kozhikode': kozhikode,
         'Feroke': feroke,
@@ -76,10 +87,9 @@ def dashboard(request):
         'Balussery_qty_ulccs_total': Balussery_qty_ulccs_total,
         'Kozhikode_qty_ulccs_total': Kozhikode_qty_ulccs_total,
         'Feroke_qty_ulccs_total': Feroke_qty_ulccs_total,
-        
+        'section_totals': section_totals,
     }
     return render(request, 'index.html', context)
-
 
 def login_view(request):
     if request.method == "POST":
@@ -103,26 +113,34 @@ def logout_view(request):
     logout(request)
     return redirect('login')
 
-# def register(request):
-#     if request.method == "POST":
-#         username = request.POST.get('username')
-#         email = request.POST.get('email')
-#         password = request.POST.get('password')
-        
-#          # Validate inputs
-#         errors = []
-
-#         if User.objects.filter(username=username).exists():
-#             return render(request, 'register.html', {'error': 'Username already exists.'})
-#         user = User.objects.create_user(username=username, email=email, password=password)
-#         user.save()
-#         return redirect('login')
-
-#     return render(request, 'register.html')
-
 @login_required
 def import_csv(request):
     # Your logic here
     return render(request, 'import_csv.html')
 
 
+
+@login_required
+def get_sections(request, division_id):
+    try:
+        division = KsebCds.objects.get(id=division_id, category=KsebCds.CategoryChoices.DIVISION)
+        sections = KsebCds.objects.filter(parent=division, category=KsebCds.CategoryChoices.SECTION)
+
+        section_data = []
+        for section in sections:
+            total_value = round_to_two(CdsDailyData.objects.filter(section=section).aggregate(total=Sum('value'))['total'] or 0)
+            actual_qty = round_to_two(CdsPreset.objects.filter(section=section).aggregate(total_actual_qty=Sum('actual_qty'))['total_actual_qty'] or 0)
+            qty_ulccs = round_to_two(CdsPreset.objects.filter(section=section).aggregate(total_qty_ulccs=Sum('qty_ulccs'))['total_qty_ulccs'] or 0)
+            completion_percentage = round_to_two((total_value / actual_qty) * 100) if actual_qty else 0
+
+            section_data.append({
+                'title': section.title,
+                'total_value': total_value,
+                'actual_qty': actual_qty,
+                'qty_ulccs': qty_ulccs,
+                'completion_percentage': completion_percentage,
+            })
+
+        return JsonResponse({'sections': section_data})
+    except KsebCds.DoesNotExist:
+        return JsonResponse({'sections': []})
